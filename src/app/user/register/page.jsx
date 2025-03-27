@@ -1,7 +1,7 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { z } from 'zod'
@@ -9,12 +9,14 @@ import { Input } from "@/components/ui/input";
 import ProfilePhoto from "@public/ProfilePhoto.jpeg";
 import Image from "next/image";
 import Link from "next/link";
+import axios from 'axios';
+import { toast } from "react-toastify";
 
 export default function FormPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false)
 
-  // Schema for form validation using Zod
+
   const formSchema = z.object({
     name: z.string()
       .min(2, { message: "Username must be at least 2 characters." }),
@@ -54,20 +56,22 @@ export default function FormPage() {
     }
     setError("");
 
-    setIsLoading(true);
-    const response = await fetch('/api/user-register/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: values.name,
-        email: values.email,
-        password: values.password
-      })
-    })
+    const data = {
+      name: values.name,
+      email: values.email,
+      password: values.password
+    }
 
-    console.log("Fronted: ",response);
+    setIsLoading(true);
+    const response = await axios.post('/api/user-register/', data);
+
+    if (response.data.success) {
+      toast.success(response.data.message);
+    } else {
+      toast.error(response.data.message);
+    }
+
+    form.resetField();
     setIsLoading(false);
   }
 
@@ -113,6 +117,9 @@ export default function FormPage() {
                     <FormControl>
                       <Input placeholder="password" type={'password'} {...field} />
                     </FormControl>
+                    <FormMessage>
+                      Password must be minimum 8 character with atleast one uppercase, one number and one special character.
+                    </FormMessage>
                   </FormItem>
                 )}
               />
