@@ -22,15 +22,19 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: null
     },
-    refresh_token: {
+    accessToken: {
         type: String,
         default: ""
     },
-    verify_email: {
+    refreshToken: {
+        type: String,
+        default: ""
+    },
+    emailVerified: {
         type: Boolean,
         default: false
     },
-    last_login_date: {
+    lastLoginDate: {
         type: Date,
         default: ""
     },

@@ -10,12 +10,47 @@ import ProfilePhoto from "@public/ProfilePhoto.jpeg";
 import Image from "next/image";
 import Link from "next/link";
 import axios from 'axios';
+import { FcGoogle } from 'react-icons/fc'
 import { toast } from "react-toastify";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
-export default function FormPage() {
+export default function RegisterPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
 
+  async function googleSignIn() {
+    setIsLoading(true);
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider)
+      .then(async (userCredencial) => {
+
+        const user = {
+          accessToken: userCredencial.user.accessToken,
+          ...userCredencial._tokenResponse,
+        }
+        await axios.put('/api/google-register/', user)
+          .then((response) => {
+            if (response.data.status !== 201) {
+              return toast.error(response.data.message);
+            } else {
+              toast.success(response.data.message);
+              router.push('/');
+            }
+          }).catch((error) => {
+            toast.error(error.message);
+          })
+        
+
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      })
+      setIsLoading(false);
+  }
 
   const formSchema = z.object({
     name: z.string()
@@ -45,7 +80,6 @@ export default function FormPage() {
       password: "",
       again_password: "",
     },
-
   })
 
   async function onSubmit(values, e) {
@@ -55,22 +89,18 @@ export default function FormPage() {
       return setError("Both password must be same.")
     }
     setError("");
-
     const data = {
       name: values.name,
       email: values.email,
       password: values.password
     }
-
     setIsLoading(true);
     const response = await axios.post('/api/user-register/', data);
-
     if (response.data.success) {
       toast.success(response.data.message);
     } else {
       toast.error(response.data.message);
     }
-
     form.resetField();
     setIsLoading(false);
   }
@@ -78,12 +108,12 @@ export default function FormPage() {
 
   return (
     <>
-      <div className="flex gap-2 border-[1px] h-[480px] border-gray-300 mx-2 sm: shadow-2xl rounded-3xl">
+      <div className="flex gap-2 border-[1px] border-gray-300 mx-2 sm: shadow-2xl rounded-3xl">
         <Image src={ProfilePhoto} alt="Register image" className="rounded-3xl object-cover md:flex hidden " />
-        <div className="flex justify-between flex-col w-full py-3 px-5">
+        <div className="flex justify-between flex-col w-full gap-4 py-3 px-5">
           <Form {...form}>
             <form onSubmit={form.handleSubmit((values, e) => onSubmit(values, e))} className="flex flex-col gap-4 border-gray-300 w-full">
-              <h1 className="w-full flex justify-center items-center text-3xl font-bold text-gray-700">Register Form</h1>
+              <h1 className="text-3xl font-bold text-gray-700">Create Account</h1>
               <FormField
                 control={form.control}
                 name="name"
@@ -136,10 +166,15 @@ export default function FormPage() {
                 )}
               />
               <p className="text-red-400 text-[14px] -mt-4">{error}</p>
-              <Button type="submit" className="float-right text-md cursor-pointer">{isLoading ? 'Loading...' : 'Register'}</Button>
+              <div className="flex flex-col gap-2 w-full items-center justify-between">
+                <Button type="submit" className="w-full float-right text-md cursor-pointer">{isLoading ? 'Loading...' : 'Register'}</Button>
+                <span className="px-2 bg-white">Or</span>
+                <p className="w-full border-t-[1px] mb-3 -mt-5 -z-50"></p>
+                <h1 className="flex items-center gap-1 px-2 p-1 cursor-pointer border-[1px] border-[#505050fb] rounded-md" onClick={googleSignIn}><FcGoogle /> Continue with Google</h1>
+              </div>
             </form>
           </Form>
-          <p>If you already have an account. Please <Link href={'/user/login'} className=" px-2 py-1 border-[1px] border-gray-300 rounded-md bg-gray-100">Login</Link></p>
+          <Link href={'/user/login'}><Button variant={'outline'} className='w-full border-black bg-[#e2e2e2] cursor-pointer'>Already have an account. Please Login</Button></Link>
         </div>
       </div>
     </>

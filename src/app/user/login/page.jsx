@@ -2,18 +2,23 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { z } from 'zod'
 import { Input } from "@/components/ui/input";
 import ProfilePhoto from "@public/ProfilePhoto.jpeg";
 import Image from "next/image";
 import Link from "next/link";
+import { FcGoogle } from "react-icons/fc";
 
-export default function FormPage() {
+export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false)
 
+
+  useEffect(() => {
+    console.log('somethig');
+  }, [])
 
   const formSchema = z.object({
     email: z.string()
@@ -65,11 +70,11 @@ export default function FormPage() {
 
   return (
     <>
-      <div className="flex gap-2 justify-center border-[1px]  h-[400px] border-gray-300 mx-2 sm: space-y-4 shadow-2xl rounded-3xl">
-        <div className="flex flex-col justify-between w-full py-3 px-5">
+      <div className="flex gap-2 justify-center border-[1px] border-gray-300 mx-2 sm: space-y-4 shadow-2xl rounded-3xl">
+        <div className="flex flex-col justify-between w-full gap-4 py-3 px-5">
           <Form {...form}>
             <form onSubmit={form.handleSubmit((values, e) => onSubmit(values, e))} className="flex flex-col gap-5 sm:p-2 border-gray-300 w-full h-full">
-              <h1 className="w-full flex justify-center items-center text-3xl font-bold text-gray-700">Login Form</h1>
+              <h1 className="text-3xl font-bold text-gray-700">Welcome</h1>
               <FormField
                 control={form.control}
                 name="email"
@@ -96,10 +101,15 @@ export default function FormPage() {
               />
               <p className="text-red-400 text-[14px] -mt-5">{error}</p>
               <Link href={'/user/forgot-password'} className="w-full flex justify-end text-blue-800 -mb-4">Forgot Password?</Link>
-              <Button type="submit" className="float-right text-md cursor-pointer">{isLoading ? 'Loading...' : 'Login'}</Button>
+              <div className="flex flex-col gap-2 w-full items-center justify-between">
+                <Button type="submit" className="w-full float-right text-md cursor-pointer">{isLoading ? 'Loading...' : 'Login'}</Button>
+                <span className="px-2 bg-white">Or</span>
+                <p className="w-full border-t-[1px] mb-3 -mt-5 -z-50"></p>
+                <h1 className="flex items-center gap-1 px-2 p-1 cursor-pointer border-[1px] border-[#505050fb] rounded-md"><FcGoogle /> Continue with Google</h1>
+              </div>
             </form>
           </Form>
-          <p>If you have'nt an account. Please <Link href={'/user/register'} className=" px-2 py-1 border-[1px] border-gray-300 rounded-md bg-gray-100">Register</Link></p>
+          <Link href={'/user/register'}><Button variant='outline' className='border-black bg-[#e2e2e2] w-full cursor-pointer'>Have'nt an account. Please Register</Button></Link>
         </div>
         <Image src={ProfilePhoto} alt="Register image" className="rounded-3xl object-cover md:flex hidden " />
       </div>
