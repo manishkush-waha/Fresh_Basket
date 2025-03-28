@@ -1,5 +1,6 @@
 import connectDB from "@/lib/mongoDB";
 import UserModel from "@/models/user.model";
+import jwt from 'jsonwebtoken'
 
 
 
@@ -24,12 +25,16 @@ export async function PUT(req, res) {
         }
 
         const user = await UserModel.create(data);
-        console.log(user);
 
-        return Response.json({
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY_ACCESS_TOKEN, { expiresIn: '7d' });
+
+        const response = Response.json({
             message: 'User Created',
             status: 201
-        })
+        });
+
+        response.headers.set('_accessToken', token);
+        return response;
     } catch (error) {
         return Response.json({
             message: 'Server error',

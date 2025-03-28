@@ -11,7 +11,7 @@ export default async function Tabs() {
           <Link href={'/categories'} className='flex flex-col justify-center items-center font-semibold py-1 px-2'><Layers />Category</Link>
           <Link href={'/search'} className='flex flex-col justify-center items-center font-semibold py-1 px-2'><Search />Search</Link>
           <Link href={'/cart'} className='flex flex-col justify-center items-center font-semibold py-1 px-2'><ShoppingCart />Cart</Link>
-          <Link href={'/profile'} className='flex flex-col justify-center items-center font-semibold py-1 px-2'><User2Icon />Profile</Link>
+          <Link href={'/user/profile'} className='flex flex-col justify-center items-center font-semibold py-1 px-2'><User2Icon />Profile</Link>
         </div>
       </div>
     </>

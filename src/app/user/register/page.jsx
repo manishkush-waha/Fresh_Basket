@@ -42,14 +42,14 @@ export default function RegisterPage() {
           }).catch((error) => {
             toast.error(error.message);
           })
-        
+
 
         setIsLoading(false);
       })
       .catch((error) => {
         toast.error(error.message);
       })
-      setIsLoading(false);
+    setIsLoading(false);
   }
 
   const formSchema = z.object({
@@ -95,12 +95,21 @@ export default function RegisterPage() {
       password: values.password
     }
     setIsLoading(true);
-    const response = await axios.post('/api/user-register/', data);
-    if (response.data.success) {
-      toast.success(response.data.message);
-    } else {
-      toast.error(response.data.message);
-    }
+    await axios.post('/api/user-register/', data)
+      .then((response) => {
+        if (response.data.status !== 201) {
+          return toast.error(response.data.message);
+        } else {
+          console.log(response.headers._accesstoken);
+          localStorage.setItem('accessToken', response.headers._accesstoken);
+          document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
+          toast.success(response.data.message);
+          router.push('/user/profile');
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      })
     form.resetField();
     setIsLoading(false);
   }

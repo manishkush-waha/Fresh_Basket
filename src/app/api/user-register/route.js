@@ -1,26 +1,23 @@
 "use server"
 import connectDB from '@/lib/mongoDB';
 import UserModel from '@/models/user.model';
-import { NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 export async function POST(req, res) {
   try {
-    const connection = await connectDB();
-
+    await connectDB();
     const { name, email, password } = await req.json();
 
     const foundUser = await UserModel.findOne({ email });
-
-    console.log(foundUser);
     if (foundUser) {
       return Response.json({
         message: 'User already exist',
         status: 409
       })
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
 
+    const hashedPassword = await bcrypt.hash(password, 10);
     const userData = {
       name,
       email,
@@ -28,12 +25,16 @@ export async function POST(req, res) {
     }
 
     const user = await UserModel.create(userData);
+    const token = jwt.sign({ userId: user._id }, (process.env.JWT_SECRET_KEY_ACCESS_TOKEN), { expiresIn: '7d' });
+    await UserModel.updateOne({ email }, { accessToken: token });
 
-    return Response.json({
-      message: 'User created',
-      success: true,
-      error: false
-    })
+    const response = Response.json({
+      message: 'User Created',
+      status: 201
+    });
+
+    response.headers.set('_accessToken', token);
+    return response;
   } catch (error) {
     console.log("catch code executed.");
     return Response.json({
