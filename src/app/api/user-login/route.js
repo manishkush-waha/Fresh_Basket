@@ -1,42 +1,44 @@
+"use server";
 import connectDB from "@/lib/mongoDB";
 import UserModel from "@/models/user.model";
-import { NextResponse } from "next/server";
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 
-export async function GET(req) {
+export async function POST(req) {
   try {
-    console.log("it start here");
-    
-    const connection = await connectDB();
-
+    await connectDB();
     const { email, password } = await req.json();
-    console.log(email, password);
-    
 
-    const user = await UserModel.find(email);
-
-    console.log(user);
-
+    const user = await UserModel.findOne({ email });
     if (!user) {
-      console.log("it comming here");
-      
-      return NextResponse.json({
-        message: 'User not found.'
+      return Response.json({
+        message: 'User not found.',
+        status: 404
       })
     }
 
-    console.log(user);
-    
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return Response.json({
+        message: 'Invalid email or password.',
+        status: 401
+      })
+    }
+    const token = jwt.sign({ userId: user._id }, (process.env.JWT_SECRET_KEY_ACCESS_TOKEN), { expiresIn: '7d' });
+    await UserModel.updateOne({ email }, { accessToken: token });
 
-    return NextResponse.json({
-      message: 'All thigs are clear',
-      success: true,
-      error: false
-    })
+    const response = Response.json({
+      message: 'Login successful',
+      status: 201
+    });
+
+    response.headers.set('accessToken', token);
+    return response;
   } catch (error) {
-    return NextResponse.json({
-      message: 'Any error hapened',
-      success: false,
+    return Response.json({
+      message: 'Server error',
+      status: 400,
       error: error
     })
   }

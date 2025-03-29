@@ -31,13 +31,15 @@ export default function RegisterPage() {
           accessToken: userCredencial.user.accessToken,
           ...userCredencial._tokenResponse,
         }
-        await axios.put('/api/google-register/', user)
+        await axios.post('/api/google-register/', user)
           .then((response) => {
             if (response.data.status !== 201) {
               return toast.error(response.data.message);
             } else {
+              localStorage.setItem('accessToken', response.headers.accesstoken);
+              document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
               toast.success(response.data.message);
-              router.push('/');
+              router.push('/user/profile');
             }
           }).catch((error) => {
             toast.error(error.message);
@@ -100,9 +102,8 @@ export default function RegisterPage() {
         if (response.data.status !== 201) {
           return toast.error(response.data.message);
         } else {
-          console.log(response.headers._accesstoken);
-          localStorage.setItem('accessToken', response.headers._accesstoken);
-          document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
+          localStorage.setItem('accessToken', response.headers.accesstoken);
+          document.cookie = `accessToken=${response.headers.accesstoken}; max-age=3600; path=/`;
           toast.success(response.data.message);
           router.push('/user/profile');
         }

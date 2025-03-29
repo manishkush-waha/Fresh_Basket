@@ -1,18 +1,50 @@
 "use client"
+import axios from 'axios';
 import jwt from 'jsonwebtoken'
+import React, { createContext, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
-export async function fetchUser(accessToken) {
-    console.log(process.env.JWT_SECRET_KEY_ACCESS_TOKEN);
-    const jsldk = 'askdj234k234laskdja293749823skdjaklsjdl234923d234'
-    
-    const varifyToken = jwt.verify(accessToken, jsldk);
-    const decodedToken = jwt.decode(accessToken);
+export const UserContext = createContext();
 
-    const currentTime = new Date().getTime();
-    if (decodedToken) {
-        // if (decodedToken.exp )
-        console.log(varifyToken, decodedToken, currentTime);
-    } else {
-        console.log("nahi mila");
-    }
-}
+export const UserProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const accessToken = localStorage.getItem('accessToken');
+
+            if (!accessToken) {
+                toast.error("Please login first");
+                router.push('/login');
+                setLoading(false);
+                return;
+            }
+            const decodedToken = jwt.decode(accessToken);
+            try {
+                const response = await axios.post('/api/user/', { userId: decodedToken?.userId });
+                if (response.status === 201) {
+                    console.log('User data:', response.data.user);
+                    setUser(response.data.user);
+                } else {
+                    toast.error("Error fetching user data");
+                }
+            } catch (error) {
+                toast.error("Error fetching user data");
+                console.error('Error fetching user data:', error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, []); // Empty dependency array means this runs once on mount
+
+    return (
+        <UserContext.Provider value={{ user, loading }}>
+            {children}
+        </UserContext.Provider>
+    );
+};

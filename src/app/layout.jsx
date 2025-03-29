@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Tabs from "@/components/Tabs";
 import { ToastContainer } from 'react-toastify';
+import { UserContext } from "@/lib/fetchUser";
 
 
 export const metadata = {
@@ -15,13 +16,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`work-sans-goog antialiased relative font-sans `}>
-        <ToastContainer />
-        <Header />
-        <Tabs />
-        <div className="py-18 md:max-w-[1000px] w-full mx-auto">
-          {children}
-        </div>
-        <Footer />
+        <UserContext.Provider>
+          <ToastContainer />
+          <Header />
+          <Tabs />
+          <div className="py-18 md:max-w-[1000px] w-full mx-auto">
+            {children}
+          </div>
+          <Footer />
+        </UserContext.Provider>
       </body>
     </html>
   );

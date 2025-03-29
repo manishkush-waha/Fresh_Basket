@@ -4,7 +4,7 @@ import UserModel from '@/models/user.model';
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
-export async function POST(req, res) {
+export async function POST(req) {
   try {
     await connectDB();
     const { name, email, password } = await req.json();
@@ -33,7 +33,7 @@ export async function POST(req, res) {
       status: 201
     });
 
-    response.headers.set('_accessToken', token);
+    response.headers.set('accessToken', token);
     return response;
   } catch (error) {
     console.log("catch code executed.");

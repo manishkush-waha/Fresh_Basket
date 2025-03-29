@@ -4,14 +4,15 @@ import jwt from 'jsonwebtoken'
 
 
 
-export async function PUT(req, res) {
+export async function POST(req) {
     try {
-        const { displayName, email, emailVerified, photoUrl, accessToken, refreshToken } = await req.json();
-
         await connectDB();
-        const data = {
+        
+        const { displayName, email, emailVerified, photoUrl } = await req.json();
+        const userData = {
             name: displayName,
             email,
+            password: email,
             avatar: photoUrl,
             emailVerified,
         }
@@ -19,21 +20,21 @@ export async function PUT(req, res) {
         const foundUser = await UserModel.findOne({ email });
         if (foundUser) {
             return Response.json({
-                message: 'User already exist',
+                message: 'User already exist, Please login.',
                 status: 409
             })
         }
 
-        const user = await UserModel.create(data);
-
+        const user = await UserModel.create(userData);
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY_ACCESS_TOKEN, { expiresIn: '7d' });
+        await UserModel.updateOne({ email }, { accessToken: token });
 
         const response = Response.json({
             message: 'User Created',
             status: 201
         });
 
-        response.headers.set('_accessToken', token);
+        response.headers.set('accessToken', token);
         return response;
     } catch (error) {
         return Response.json({

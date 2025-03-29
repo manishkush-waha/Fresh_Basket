@@ -10,10 +10,43 @@ import ProfilePhoto from "@public/ProfilePhoto.jpeg";
 import Image from "next/image";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+
+  async function googleSignIn() {
+    setIsLoading(true);
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider)
+      .then(async (userCredencial) => {
+        
+        await axios.post('/api/google-login/', {email: userCredencial.user.email})
+          .then((response) => {
+            if (response.data.status !== 201) {
+              return toast.error(response.data.message);
+            } else {
+              localStorage.setItem('accessToken', response.headers.accesstoken);
+              document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
+              toast.success(response.data.message);
+              router.push('/user/profile');
+            }
+          }).catch((error) => {
+            toast.error(error.message);
+          })
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      })
+    setIsLoading(false);
+  }
 
   useEffect(() => {
     console.log('somethig');
@@ -45,24 +78,25 @@ export default function LoginPage() {
     setError("");
 
     setIsLoading(true);
-    const response = await fetch('/api/user-login/', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: values.email,
-        password: values.password
-      })
-    }).then(data => {
-      if (data.error) {
-        setError(data.error);
-      }
-    }).catch(err => {
-      setError('An error occurred during logging.');
-    });
+    const data = {
+      email: values.email,
+      password: values.password
+    }
 
-    console.log(values, response);
+    await axios.post('/api/user-login/', data)
+      .then((response) => {
+        if (response.data.status !== 201) {
+          return toast.error(response.data.message);
+        } else {
+          localStorage.setItem('accessToken', response.headers.accesstoken);
+          document.cookie = `accessToken=${response.headers.accesstoken}; max-age=3600; path=/`;
+          toast.success(response.data.message);
+          router.push('/user/profile');
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      })
     setIsLoading(false);
   }
 
@@ -99,12 +133,12 @@ export default function LoginPage() {
                 )}
               />
               <p className="text-red-400 text-[14px] -mt-5">{error}</p>
-              <Link href={'/user/forgot-password'} className="w-full flex justify-end text-blue-800 -mb-4">Forgot Password?</Link>
+              <div className="w-full flex justify-end text-blue-800 -mb-4"><Link href={'/user/forgot-password'}>Forgot Password?</Link></div>
               <div className="flex flex-col gap-2 w-full items-center justify-between">
                 <Button type="submit" className="w-full float-right text-md cursor-pointer">{isLoading ? 'Loading...' : 'Login'}</Button>
                 <span className="px-2 bg-white">Or</span>
                 <p className="w-full border-t-[1px] mb-3 -mt-5 -z-50"></p>
-                <h1 className="flex items-center gap-1 px-2 p-1 cursor-pointer border-[1px] border-[#505050fb] rounded-md"><FcGoogle /> Continue with Google</h1>
+                <h1 className="flex items-center gap-1 px-2 p-1 cursor-pointer border-[1px] border-[#505050fb] rounded-md" onClick={googleSignIn}><FcGoogle /> Continue with Google</h1>
               </div>
             </form>
           </Form>
