@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`work-sans-goog antialiased relative font-sans `}>
-        <UserContext.Provider>
+        {/* <UserContext.Provider> */}
           <ToastContainer />
           <Header />
           <Tabs />
@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
             {children}
           </div>
           <Footer />
-        </UserContext.Provider>
+        {/* </UserContext.Provider> */}
       </body>
     </html>
   );
