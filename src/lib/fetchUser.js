@@ -40,7 +40,7 @@ export const UserProvider = ({ children }) => {
         };
 
         fetchUserData();
-    }, []); // Empty dependency array means this runs once on mount
+    }, [router]); // Empty dependency array means this runs once on mount
 
     return (
         <UserContext.Provider value={{ user, loading }}>
