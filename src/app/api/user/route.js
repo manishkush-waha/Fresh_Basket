@@ -7,9 +7,6 @@ export async function POST(req) {
         connectDB();
         const { userId } = await req.json();
 
-        console.log("userId", userId);
-
-
         return new Response(JSON.stringify({ userId }), { status: 201 });
     } catch (error) {
         console.error(error);

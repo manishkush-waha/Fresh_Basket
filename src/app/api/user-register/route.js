@@ -36,7 +36,6 @@ export async function POST(req) {
     response.headers.set('accessToken', token);
     return response;
   } catch (error) {
-    console.log("catch code executed.");
     return Response.json({
       message: 'server error',
       success: false,
