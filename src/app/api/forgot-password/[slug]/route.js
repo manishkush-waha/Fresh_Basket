@@ -1,34 +1,41 @@
 "use server"
 import connectDB from "@/lib/mongoDB";
 import UserModel from "@/models/user.model";
+import URL from 'url';
 
 // GET endpoint to send OTP
 export async function GET(req) {
     try {
         await connectDB();
-        const { email } = await req.json();
+        
+        const { searchParams } = new URL(req.url);
+        const email = String(searchParams).split('/', 4);
+        console.log(email);
 
         if (!email) {
             return Response.json({
-                error: 'Email is required',
+                message: 'Email is required',
                 status: 400
             });
         }
 
+        console.log('manish');
         // Check if user exists
         const user = await UserModel.findOne({ email });
         if (!user) {
             return Response.json({
-                error: 'User not found',
+                message: 'User not found',
                 status: 404
             });
         }
 
         // Generate OTP
+        console.log('manish');
         const otp = generatedOtp();
         const expiry = new Date();
         expiry.setMinutes(expiry.getMinutes() + 10);
 
+        console.log('manish');
         await UserModel.updateOne(
             { email }, {
             $set: {
@@ -37,6 +44,7 @@ export async function GET(req) {
             }
         });
 
+        console.log('manish');
         return Response.json({
             message: 'OTP sent successfully',
             status: 200,
