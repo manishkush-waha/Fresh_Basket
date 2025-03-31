@@ -31,7 +31,8 @@ export async function POST(req) {
 
         const response = Response.json({
             message: 'User Created',
-            status: 201
+            status: 201,
+            user
         });
 
         response.headers.set('accessToken', token);

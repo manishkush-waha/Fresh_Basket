@@ -15,11 +15,14 @@ import { toast } from "react-toastify";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setUserDetails } from "@/store/userSlice";
 
 export default function RegisterPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter();
+  const dispatch = useDispatch();
 
   // if they already logged in then redirect to profile page
   useEffect(() => {
@@ -49,7 +52,8 @@ export default function RegisterPage() {
               localStorage.setItem('accessToken', response.headers.accesstoken);
               document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
               toast.success(response.data.message);
-              router.push('/profile');
+              dispatch(setUserDetails(response.data.user));
+              router.push(`/profile/${response.data?.userId}`);
             }
           }).catch((error) => {
             toast.error(error.message);
@@ -113,7 +117,8 @@ export default function RegisterPage() {
           localStorage.setItem('accessToken', response.headers.accesstoken);
           document.cookie = `accessToken=${response.headers.accesstoken}; max-age=3600; path=/`;
           toast.success(response.data.message);
-          router.push('/profile');
+          dispatch(setUserDetails(response.data.user));
+          router.push(`/profile/${response.data?._userId}`);
         }
       })
       .catch((error) => {

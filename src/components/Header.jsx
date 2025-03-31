@@ -7,12 +7,14 @@ import { Button } from './ui/button'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
-import { setUserDetails } from '@/store/userSlice'
+import { logout, setUserDetails } from '@/store/userSlice'
+import { useRouter } from 'next/navigation'
 
 export default function Header() {
     const user = useSelector((state) => state?.user)
     const [isDark, setIsDark] = useState(false);
     const [showprofile, setShowprofile] = useState(false);
+    const router = useRouter();
     const dispatch = useDispatch();
 
 
@@ -71,15 +73,18 @@ export default function Header() {
                                             user.avatar
                                                 ? <div className='w-full flex flex-col gap-2'>
                                                     <div>
-                                                        <h1 className='text-lg font-bold capitalize'>{"mansih"}</h1>
+                                                        <h1 className='text-lg font-bold capitalize'>{user?.name}</h1>
                                                     </div>
                                                     <Link href={`/profile/${user?._id}`} onClick={() => setShowprofile(!showprofile)}><Button variant={'outline'} className='flex justify-start rounded cursor-pointer border-[1px] w-full float-start'>Profile</Button></Link>
                                                     <Link href={'/orders'} onClick={() => setShowprofile(!showprofile)}><Button variant={'outline'} className='flex justify-start rounded cursor-pointer border-[1px] w-full float-start'>Orders</Button></Link>
                                                     <Link href={'/categories'} onClick={() => setShowprofile(!showprofile)}><Button variant={'outline'} className='flex justify-start rounded cursor-pointer border-[1px] w-full float-start'>Categories</Button></Link>
                                                     <hr />
                                                     <Button variant={'outline'} onClick={() => {
+                                                        setShowprofile(!showprofile);
                                                         localStorage.removeItem('accessToken');
+                                                        dispatch(logout());
                                                         toast.success('Logout successfully')
+                                                        router.push('/login/');
                                                     }} className='cursor-pointer'>Logout</Button>
                                                 </div>
                                                 : <div className='w-full p-2 h-full flex flex-col items-center gap-2'>

@@ -23,7 +23,8 @@ export async function POST(req) {
         
         const response = Response.json({
             message: 'Login successful',
-            status: 201
+            status: 201,
+            user
         });
         
         response.headers.set('accessToken', token);

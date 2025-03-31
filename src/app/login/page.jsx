@@ -15,10 +15,13 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useDispatch } from "react-redux";
+import { setUserDetails } from "@/store/userSlice";
 
 export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useDispatch();
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +47,8 @@ export default function LoginPage() {
               localStorage.setItem('accessToken', response.headers.accesstoken);
               document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
               toast.success(response.data.message);
-              router.push('/profile');
+              dispatch(setUserDetails(response.data.user));
+              router.push(`/profile/${response.data?.userId}`);
             }
           }).catch((error) => {
             toast.error(error.message);
@@ -96,7 +100,8 @@ export default function LoginPage() {
           localStorage.setItem('accessToken', response.headers.accesstoken);
           document.cookie = `accessToken=${response.headers.accesstoken}; max-age=3600; path=/`;
           toast.success(response.data.message);
-          router.push('/profile');
+          dispatch(setUserDetails(response.data.user));
+          router.push(`/profile/${response.data?.userId}`);
         }
       })
       .catch((error) => {
