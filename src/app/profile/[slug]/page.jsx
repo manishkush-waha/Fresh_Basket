@@ -29,7 +29,7 @@ export default function ProfilePage() {
       <section >
         <div className='m-3 flex items-center justify-evenly flex-col sm:flex-row gap-9'>
           <div className='flex flex-col gap-3'>
-            <div className='h-26 w-26 flex justify-center items-center bg-blue-100 rounded-full border-2 animate-pulse '>
+            <div className='h-24 w-24 flex justify-center items-center bg-blue-100 rounded-full border-2 animate-pulse '>
               <LucideUser size={80} />
               {/* <img
                 src="" alt="" /> */}
@@ -46,7 +46,7 @@ export default function ProfilePage() {
         </div>
         <hr />
         <div className='m-8 mt-3 flex flex-col font-semibold '>
-        <div className='flex flex-col gap-3 sm:ml-60'>
+        <div className='flex flex-col gap-3 sm:ml-56'>
           <p>My Order</p>
           <p>My Order History</p>
           <p>Save address</p>
