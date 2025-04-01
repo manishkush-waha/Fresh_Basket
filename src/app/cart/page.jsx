@@ -10,7 +10,7 @@ export default function page() {
     if (typeof window !== 'undefined') {
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
-        router.push('/profile')
+        router.push('/login')
       }
     }
   }, [])
