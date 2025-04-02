@@ -1,13 +1,15 @@
+"use client"
+import { Sidebar } from 'lucide-react'
+import { Link } from 'next/navigation'
 import React from 'react'
 
-export default function page() {
+export default function ShopDashboard() {
   return (
-    <div>Shop page</div>
+    <>
+      <div>
+        {/* <Link href=''></Link> */}
+        shop ShopDashboard
+      </div>
+    </>
   )
 }
-// /src
-//     /app
-//         /shops
-//             page.jsx
-//     /lib
-//         db.js

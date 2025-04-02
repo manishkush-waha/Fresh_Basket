@@ -48,7 +48,7 @@ export default function LoginPage() {
               document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
               toast.success(response.data.message);
               dispatch(setUserDetails(response.data.user));
-              router.push(`/profile/${response.data?.userId}`);
+              router.push(`/profile/${response.data?.user?._id}`);
             }
           }).catch((error) => {
             toast.error(error.message);

@@ -53,6 +53,6 @@ const userSlice  = createSlice({
     }
 })
 
-export const { setUserDetails, logout ,updatedAvatar} = userSlice.actions
+export const { setUserDetails, logout ,updatedAvatar } = userSlice.actions
 
 export default userSlice.reducer
