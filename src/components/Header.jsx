@@ -38,11 +38,11 @@ export default function Header() {
                             }
                         </div>
                         {
-                            <div className='relative w-[50px] rounded-full my-1' >
+                            <div className='relative w-[50px] h-[50px] rounded-full my-1' >
                                 <div onClick={() => { setShowprofile(!showprofile) }} className='w-full h-full rounded-full border-[1px]  cursor-pointer flex justify-center items-center'>
                                     {
                                         user?.avatar
-                                            ? <img src={user?.avatar} alt='ProfileImage' width={40} height={40} className='border-[2px] border-gray-300 w-full h-full rounded-full' />
+                                            ? <img src={user?.avatar} alt='ProfileImage' width={40} height={40} className='border-[2px] border-gray-300 w-full h-full rounded-full object-cover'/>
                                             : <User2Icon className='w-full h-full rounded-full' />
                                     }
                                 </div>
