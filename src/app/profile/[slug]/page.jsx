@@ -89,7 +89,7 @@ export default function ProfilePage() {
           <div className='relative h-26 w-26 flex justify-center items-center cursor-pointer bg-blue-100 rounded-full border-2 -z-20'>
             {
               user?.avatar
-                ? <img src={user?.avatar} alt="User Profile" className='object-cover rounded-full -z-10' />
+                ? <img src={user?.avatar} alt="User Profile" className='rounded-full object-cover h-full  -z-10' />
                 : <LucideUser size={90} />
             }
           </div>
