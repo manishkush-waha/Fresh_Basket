@@ -3,14 +3,13 @@ import { handleAddAddress } from '@/store/addressSlice';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 export default function AddAddressPage() {
     const user = useSelector((state) => state?.user);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const dispatch = useDispatch();
 
     const [address, setAddress] = useState({
         address_line: "",
@@ -30,7 +29,6 @@ export default function AddAddressPage() {
             .then((response) => {
                 if (response.status === 200) {
                     toast.success(response.data.message);
-                    dispatch(handleAddAddress(response.data?.address_details));
                     router.back();
                     setLoading(false);
                 }

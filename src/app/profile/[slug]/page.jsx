@@ -6,20 +6,16 @@ import { ArrowBigRightDashIcon, LogOut, LucideUser, Pencil } from 'lucide-react'
 import Link from 'next/link';
 import { logout, updatedAvatar } from '@/store/userSlice';
 import { toast } from 'react-toastify';
-import axios, { Axios } from 'axios';
-import UserProfileAvatarEdit from '@/components/ChangeAvarar';
+import axios from 'axios';
 import Loading from '@/app/loading';
+import { handleAddAddress } from '@/store/addressSlice';
 
 
 export default function ProfilePage() {
   const user = useSelector((state) => state?.user)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [addressId, setAddressId] = useState({
-    path: useParams()
-  });
-  const [userAddressId, setUserAddressId] = useState([])
-  const [isEditeAvataropen, setIsEditeAvataropen] = useState(true)
+  const [addressDetails, setAddressDetails] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -32,9 +28,9 @@ export default function ProfilePage() {
     }
   }, [])
 
+
   const handleUploadAvatarImage = async (e) => {
     const file = e.target.files[0];
-
     if (!file) {
       return toast.error("Image not selected");
     }
@@ -42,7 +38,6 @@ export default function ProfilePage() {
     const form = new FormData();
     form.set('avatar', blob);
     form.set('userId', user?._id)
-
     try {
       setLoading(true)
       const response = await axios.post('/api/upload-image/', form);
@@ -55,28 +50,36 @@ export default function ProfilePage() {
     }
   }
 
+
   async function fetchAddressDetails() {
-    await axios.post('/api/fetch-address/', { myAddress: addressId.path })
+    const form = new FormData();
+    form.set('userId', user?._id);
+    await axios.post('/api/fetch-address/', form)
       .then((response) => {
         if (response.data.status === 200) {
-          // console.log(response.data);
-          setUserAddressId([response.data.addDetails]);
-          toast.success(response.data.message)
-        } else {
-          // console.log(response.data);
+          setAddressDetails(response.data?.addDetails)
+          // dispatch(handleAddAddress(response.data?.addDetails));
         }
       })
       .catch((error) => {
         toast.error(error.message);
       })
   }
-
   useEffect(() => {
     fetchAddressDetails();
-  }, [user?.address_details[0]]);
+  }, []);
+
 
   if (loading) {
     return <Loading />
+  }
+
+  if (error) {
+    return (
+      <>
+       {error}
+      </>
+    )
   }
 
   return (
@@ -105,11 +108,19 @@ export default function ProfilePage() {
         </div>
         <div className='hidden md:flex flex-col gap-2'>
           {
-            user?.address_details[0]
-              ? <div>
-                <p className='text-md text-gray-600'>Address</p>
+            addressDetails[0]
+              ? <div className='flex flex-col'>
+                <p className='w-full font-bold'>{addressDetails[0].pincode}</p>
+                <div className='w-full '>
+                  <p>{addressDetails[0].address_line}</p>
+                  <p>{addressDetails[0].city}</p>
+                </div>
+                <div className='w-full flex gap-2'>
+                  <i>{addressDetails[0].state},</i>
+                  <i>{addressDetails[0].country}</i>
+                </div>
               </div>
-              : <button className='px-2 py-1 bg-blue-600 text-white cursor-pointer rounded-md' onClick={() => { router.push('/profile/add-address/') }}>Add Address</button>
+              : <button className='px-2 py-1 bg-blue-600 text-white cursor-pointer rounded-sm' onClick={() => { router.push('/profile/add-address/') }}>Add Address</button>
           }
         </div>
       </div>
