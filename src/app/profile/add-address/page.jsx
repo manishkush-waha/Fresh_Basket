@@ -1,4 +1,5 @@
 "use client"
+import LoadSpinner from '@/components/LoadSpinner';
 import { handleAddAddress } from '@/store/addressSlice';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -23,7 +24,7 @@ export default function AddAddressPage() {
 
     async function HandleSavaAddress(e) {
         e.preventDefault();
-        
+
         setLoading(true);
         await axios.post('/api/add-address/', { address })
             .then((response) => {
@@ -78,7 +79,7 @@ export default function AddAddressPage() {
                             onChange={(e) => setAddress({ ...address, mobile: e.target.value })} />
                     </label>
                 </div>
-                <button type="submit" className='bg-blue-500 text-white py-2 px-4 rounded-md'>{loading ? "Loading..." : "Add Address"}</button>
+                <button type="submit" className='bg-blue-500 text-white py-2 px-4 rounded-md'>{loading ? <LoadSpinner /> : "Add Address"}</button>
             </form>
         </section>
     )

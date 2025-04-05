@@ -17,6 +17,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useDispatch } from "react-redux";
 import { setUserDetails } from "@/store/userSlice";
+import LoadSpinner from "@/components/LoadSpinner";
 
 export default function LoginPage() {
   const [error, setError] = useState('');
@@ -144,7 +145,7 @@ export default function LoginPage() {
               <p className="text-red-400 text-[14px] -mt-5">{error}</p>
               <div className="w-full flex justify-end text-blue-800 -mb-4"><Link href={'/forgot-password'}>Forgot Password?</Link></div>
               <div className="flex flex-col gap-2 w-full items-center justify-between">
-                <Button type="submit" className="w-full float-right text-md cursor-pointer">{isLoading ? 'Loading...' : 'Login'}</Button>
+                <Button type="submit" className="w-full float-right text-md cursor-pointer">{isLoading ? <LoadSpinner /> : 'Login'}</Button>
                 <span className="px-2 bg-white">Or</span>
                 <p className="w-full border-t-[1px] mb-3 -mt-5 -z-50"></p>
                 <h1 className="flex items-center gap-1 px-2 p-1 cursor-pointer border-[1px] border-[#505050fb] rounded-md" onClick={googleSignIn}><FcGoogle /> Continue with Google</h1>

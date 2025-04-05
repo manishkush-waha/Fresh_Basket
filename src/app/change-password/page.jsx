@@ -1,4 +1,5 @@
 "use client"
+import LoadSpinner from '@/components/LoadSpinner';
 import { setUserDetails } from '@/store/userSlice';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -55,7 +56,7 @@ export default function ChangePassword() {
               Again Password:
               <input type='password' placeholder='again password' id='again_password' onChange={(e) => { setAgainPassword(e.target.value) }} className='font-semibold border-[1px] px-2 rounded-sm py-1' />
             </label>
-            <button type='submit' className='bg-blue-600 text-white w-fit flex justify-end px-2 rounded-sm text-md py-1'>{loading ? 'Loading...' : 'Change Password'}</button>
+            <button type='submit' className='bg-blue-600 text-white w-fit flex justify-end px-2 rounded-sm text-md py-1'>{loading ? <LoadSpinner /> : 'Change Password'}</button>
           </form>
         </div>
       </div>

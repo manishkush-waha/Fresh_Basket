@@ -8,7 +8,6 @@ import { logout, updatedAvatar } from '@/store/userSlice';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Loading from '@/app/loading';
-import { handleAddAddress } from '@/store/addressSlice';
 
 
 export default function ProfilePage() {
@@ -58,7 +57,6 @@ export default function ProfilePage() {
       .then((response) => {
         if (response.data.status === 200) {
           setAddressDetails(response.data?.addDetails)
-          // dispatch(handleAddAddress(response.data?.addDetails));
         }
       })
       .catch((error) => {
@@ -140,7 +138,7 @@ export default function ProfilePage() {
             <Link href='/privacy-policy' className='w-full flex justify-between items-center px-4 py-2 text-nowrap border-[1px] border-gray-400 rounded-md capitalize'>policy and licence <ArrowBigRightDashIcon /></Link>
             <Link href='/faqs' className='w-full flex justify-between items-center px-4 py-2 text-nowrap border-[1px] border-gray-400 rounded-md capitalize'>Help with FAQs<ArrowBigRightDashIcon /></Link>
           </div>
-          <Link href='/shop-dashboard' className='w-full flex justify-between items-center px-4 py-2 text-nowrap border-[1px] border-gray-400 rounded-md capitalize'>Want to sell<ArrowBigRightDashIcon /></Link>
+          <Link href='/create-shop/' className='w-full flex justify-between items-center px-4 py-2 text-nowrap border-[1px] border-gray-400 rounded-md capitalize'>Want to sell<ArrowBigRightDashIcon /></Link>
         </div>
         <button className='border-[1px] border-gray-400 rounded-md capitalize w-full flex justify-between items-center px-4 py-2 text-nowrap' onClick={() => {
           localStorage.removeItem('accessToken');

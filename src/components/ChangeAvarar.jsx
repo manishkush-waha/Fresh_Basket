@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updatedAvatar } from '../store/userSlice'
 import { IoClose } from "react-icons/io5";
 import axios from 'axios'
+import LoadSpinner from './LoadSpinner';
 
 const UserProfileAvatarEdit = ({ close }) => {
     const user = useSelector(state => state.user)
@@ -63,7 +64,7 @@ const UserProfileAvatarEdit = ({ close }) => {
                     <label htmlFor='uploadProfile'>
                         <div className='border border-primary-200 cursor-pointer hover:bg-primary-200 px-4 py-1 rounded text-sm my-3'>
                             {
-                                loading ? "Loading..." : "Upload"
+                                loading ? <LoadSpinner /> : "Upload"
                             }
                         </div>
                         <input onChange={handleUploadAvatarImage} type='file' id='uploadProfile' className='hidden' />

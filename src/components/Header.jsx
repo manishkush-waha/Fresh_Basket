@@ -18,7 +18,7 @@ export default function Header() {
 
     return (
         <>
-            <header className='fixed flex w-full border-b-[1px] border-gray-300 shadow-md bg-gray-100'>
+            <header className='fixed flex w-full border-b-[1px] border-gray-300 shadow-md bg-gray-100 z-[1000]'>
                 <div className='md:max-w-[1000px] w-full mx-auto flex justify-between items-center px-2 p-1 '>
                     <div>
                         <Link href={'/'}><Image src={Logo} width={120} height={60} alt='Logo'/></Link>

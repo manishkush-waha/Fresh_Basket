@@ -26,7 +26,7 @@ export default function MainPage({ children }) {
             if (response.data.user) {
                 if (response.data.user.role == 'SHOPOWNER') {
                     setUserType('SHOPOWNER');
-                    router.push('/shop-dashboard');
+                    router.push('/shop-dashboard/');
                 } else {
                     setUserType('USER');
                 }
