@@ -48,7 +48,7 @@ export default function Header() {
                                 </div>
                                 <div className={`absolute top-[100%] rounded right-0 h-auto w-[150] sm:w-[250px] shadow-lg p-2 bg-[#d3d3d3] ${showprofile ? 'flex' : 'hidden'}`}>
                                     {
-                                        user.avatar
+                                        user.avatar || user.email
                                             ? <div className='w-full flex flex-col gap-2'>
                                                 <div>
                                                     <h1 className='text-lg font-bold capitalize'>{user?.name}</h1>

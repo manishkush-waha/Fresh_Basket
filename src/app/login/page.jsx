@@ -18,6 +18,7 @@ import { auth } from "@/lib/firebase";
 import { useDispatch } from "react-redux";
 import { setUserDetails } from "@/store/userSlice";
 import LoadSpinner from "@/components/LoadSpinner";
+import { setShopDetails } from "@/store/shopSlice";
 
 export default function LoginPage() {
   const [error, setError] = useState('');
@@ -43,13 +44,23 @@ export default function LoginPage() {
         await axios.post('/api/google-login/', { email: userCredencial.user.email })
           .then((response) => {
             if (response.data.status !== 201) {
-              return toast.error(response.data.message);
+              if (response.data.role === "SHOPOWNER") {
+                localStorage.setItem('accessToken', response.headers.accesstoken);
+                document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
+                toast.success(response.data.message);
+                dispatch(setShopDetails(response.data.user));
+                router.push(`/shop-dashboard/`);
+              }
+              
+              if (response.data.role === "USER") {
+                localStorage.setItem('accessToken', response.headers.accesstoken);
+                document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
+                toast.success(response.data.message);
+                dispatch(setUserDetails(response.data.user));
+                router.push(`/profile/${response.data?.user?._id}`);
+              }
             } else {
-              localStorage.setItem('accessToken', response.headers.accesstoken);
-              document.cookie = `accessToken=${response.headers._accesstoken}; max-age=3600; path=/`;
-              toast.success(response.data.message);
-              dispatch(setUserDetails(response.data.user));
-              router.push(`/profile/${response.data?.user?._id}`);
+              return toast.error(response.data.message);
             }
           }).catch((error) => {
             toast.error(error.message);

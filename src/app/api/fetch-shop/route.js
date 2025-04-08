@@ -1,12 +1,14 @@
 "use server"
 import connectDB from "@/lib/mongoDB";
-import jwt from "jsonwebtoken";
-import UserModel from "@/models/user.model";
+import shopOwnerModel from "@/models/shopOwner.model";
+import jwt from 'jsonwebtoken';
 
 export async function POST(req) {
     try {
         await connectDB();
         const { accessToken } = await req.json();
+        console.log(accessToken);
+
         if (!accessToken) {
             return Response.json({
                 message: "Access token not found",
@@ -21,10 +23,11 @@ export async function POST(req) {
                 { status: 401 }
             );
         }
-        const userId = jwt.decode(accessToken);
-        const user = await UserModel.findById(userId);
+        const shopId = jwt.decode(accessToken);
+        console.log(shopId);
+        const shop = await shopOwnerModel.findById(shopId);
 
-        if (!user) {
+        if (!shop) {
             return Response.json(
                 { message: "Something goes wrong" },
                 { status: 404 }
@@ -32,8 +35,8 @@ export async function POST(req) {
         }
 
         return Response.json({
-            message: "User fetched successfully",
-            user,
+            message: "shop fetched successfully",
+            shop,
             status: 201,
         });
     } catch (error) {

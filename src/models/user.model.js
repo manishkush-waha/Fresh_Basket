@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -70,6 +71,12 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: ""
     },
+    shop: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'shopOwner'
+        }
+    ],
     role: {
         type: String,
         default: "USER"
